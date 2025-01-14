@@ -11,7 +11,7 @@ jobs:
     name: Flatter
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/andyholmes/flatter/gnome:44
+      image: ghcr.io/andyholmes/flatter/gnome:master
       options: --privileged
 
     strategy:
@@ -28,6 +28,13 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Setup GPG
+        id: gpg
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
       # See "Multiple Architectures" below
       - name: Setup QEMU
         if: ${{ matrix.arch == 'aarch64' }}
@@ -38,11 +45,11 @@ jobs:
 
       - name: Install Flatpak dependencies
         run: |
-          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk21/${{ matrix.arch }}/23.08
-          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk17/${{ matrix.arch }}/23.08
-          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk8/${{ matrix.arch }}/23.08
-          flatpak install --noninteractive org.kde.Sdk/${{ matrix.arch }}/6.7
-          flatpak install --noninteractive org.kde.Platform/${{ matrix.arch }}/6.7
+          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk21/${{ matrix.arch }}/24.08
+          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk17/${{ matrix.arch }}/24.08
+          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk8/${{ matrix.arch }}/24.08
+          flatpak install --noninteractive org.kde.Sdk/${{ matrix.arch }}/6.8
+          flatpak install --noninteractive org.kde.Platform/${{ matrix.arch }}/6.8
 
       - name: Build
         uses: andyholmes/flatter@main
